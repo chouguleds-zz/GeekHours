@@ -6,18 +6,32 @@ var MongoClient = require(process.cwd() + '\\DataStore\\dbConnection\\MongoClien
 var AccountDbFunctions = require(process.cwd() + '\\DataStore\\DbFunctions\\AccountDbFunctions.js');
 var jwt = require('jsonwebtoken');
 var cookies = null
+
 exports.authenticationHandler = function(request, response) {
 	cookies = new Cookies(request, response)
-	var credentials = {
-		username: request.body.email,
-		password: request.body.password
+
+	var data='';
+		 request.on('data', function(chunk) {
+		 	
+		 	data+=chunk.toString();
+        
+    });	
+    request.on('end', function() {
+		 	var d=JSON.parse(data)
+		 	console.log(d)
+		 var credentials = {
+		username: d.emailId,
+		password: d.password
 	};
 	AccountDbFunctions.loginQuery(MongoClient.dbCon, credentials, callback, response);
-
+        
+    });	
+	
 }
 
 function callback(isSuccess, response, user) {
-	if (isSuccess) {
+	if (isSuccess&&user!=null) {
+		console.log(user.toString())
 		user.password = null
 		var token = jwt.sign(user, appConfig.secret, {
 			expiresIn: 3660 // expires in 24 hours
@@ -28,8 +42,8 @@ function callback(isSuccess, response, user) {
 		response.write(new Buffer(JSON.stringify(user)))
 		response.end()
 
-
 	} else {
+		//response.write("invalid ")
 		response.end();
 	}
 }

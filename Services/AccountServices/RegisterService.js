@@ -5,27 +5,25 @@ var MongoClient = require(process.cwd() + '\\DataStore\\dbConnection\\MongoClien
 var AccountDbFunctions = require(process.cwd() + '\\DataStore\\DbFunctions\\AccountDbFunctions.js');
 
 exports.registerUserHandler = function(request, response) {
-
-	if (request.body.category.valueOf() === 'Customer') {
-		userObj = {
-			emailId: request.body.emailId,
-			password: request.body.password,
-			phoneNumber: request.body.phoneNumber,
-			category: request.body.category,
-			events: []
+		var data='';
+		 request.on('data', function(chunk) {
+		 	
+		 	data+=chunk.toString();
+        
+    });	
+    request.on('end', function() {
+		 	var d=JSON.parse(data)
+		 	console.log(d)
+		 userObj = {
+			name:d.name,
+			emailId: d.emailId,
+			password: d.password,
+			phoneNumber: d.phoneNumber,
 		}
 		AccountDbFunctions.registerUserQuery(MongoClient.dbCon, userObj, response, callback)
-	} else {
-		userObj = {
-			emailId: request.body.emailId,
-			password: request.body.password,
-			phoneNumber: request.body.phoneNumber,
-			category: request.body.category,
-			serviceProvided: []
-		}
-
-		AccountDbFunctions.registerUserQuery(MongoClient.dbCon, userObj, response, callback)
-	}
+        
+    });	
+		
 }
 
 function callback(isSuccess, response) {

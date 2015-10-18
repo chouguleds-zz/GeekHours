@@ -1,6 +1,9 @@
 var jwt = require('jsonwebtoken')
-var createEventService = require('../Services/CustomerServices/CreateEventService.js');
-var addVendorService = require('../Services/VendorServices/AddVendorEventService.js');
+
+
+var getCategoriesService = require('../Services/TeacherServices/GetCategoriesService.js');
+var getVillegersService = require('../Services/TeacherServices/GetVillegersService.js');
+var scheduleLectureService = require('../Services/TeacherServices/ScheduleLectureService.js');
 var appConfig = require(process.cwd() + '\\AppConfig')
 var Cookies = require('cookies')
 var exports = module.exports = {}
@@ -31,5 +34,7 @@ exports.privateRouter.use(function(req, res, next) {
 	}
 })
 
-exports.privateRouter.post('/createEvent', createEventService.createEventHandler)
-exports.privateRouter.post('/addVendorService', addVendorService.addServiceHandler)
+
+exports.privateRouter.get('/getCatogeries', getCategoriesService.getCategoriesHandler)
+exports.privateRouter.post('/scheduleLecture', scheduleLectureService.scheduleLectureHandler)
+exports.privateRouter.post('/getVillegers', getVillegersService.getVillegersHandler)
